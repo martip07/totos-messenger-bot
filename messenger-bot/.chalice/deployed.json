@@ -1,0 +1,12 @@
+{
+  "dev": {
+    "api_handler_name": "messenger-bot-dev",
+    "api_handler_arn": "arn:aws:lambda:us-west-2:927161694694:function:messenger-bot-dev",
+    "lambda_functions": {},
+    "backend": "api",
+    "chalice_version": "1.0.2",
+    "rest_api_id": "xul3sa5q07",
+    "api_gateway_stage": "api_dev",
+    "region": "us-west-2"
+  }
+}

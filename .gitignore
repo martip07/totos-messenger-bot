@@ -1,2 +1,4 @@
 venv
 .vscode
+messenger-bot/chalicelib
+messenger-bot/__pycache__

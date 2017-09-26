@@ -1,29 +1,28 @@
 from chalice import Chalice
+from chalicelib import FB_TOKEN
+from chalicelib import VER_FB_TOKEN
 
 app = Chalice(app_name='messenger-bot')
+app.debug = True
 
 
 @app.route('/')
 def index():
-    return {'hello': 'world'}
+    return {'hello': 'Toto\'s Pizza Messenger Bot'}
 
+@app.route('/webhook', methods=['GET'])
+def api_verification():
+    token = VER_FB_TOKEN
+    request = app.current_request
+    if request.method == 'GET':
+        if (request.query_params['hub.mode'] == 'subscribe') and (request.query_params['hub.verify_token'] == token):
+            print('Validacion de webhook por parte de FB')
+            print(token)
+            return request.query_params['hub.challenge']
+        else:
+            print('Validacion incorrecta')
+            return 'Validacion incorrecta', 403
 
-# The view function above will return {"hello": "world"}
-# whenever you make an HTTP GET request to '/'.
-#
-# Here are a few more examples:
-#
-# @app.route('/hello/{name}')
-# def hello_name(name):
-#    # '/hello/james' -> {"hello": "james"}
-#    return {'hello': name}
-#
-# @app.route('/users', methods=['POST'])
-# def create_user():
-#     # This is the JSON body the user sent in their POST request.
-#     user_as_json = app.current_request.json_body
-#     # We'll echo the json body back to the user in a 'user' key.
-#     return {'user': user_as_json}
-#
-# See the README documentation for more examples.
-#
+@app.route('/webhook', methods=['POST'])
+def bot_webhook():
+    s
