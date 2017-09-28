@@ -38,16 +38,10 @@ def bot_webhook():
             for entry_element in entries:
                 page_id = entry_element['id']
                 time_event = entry_element['time']
-                #print(str(page_id) + ' ' + str(time_event))
                 for message_element in messages:
-                    #print(message_element['message'])
-                    #if message_element['message']:
-                        #print('pruebas: ' + str(message_element['message']))
-                    #    recieved_message(message_element)
                     if 'message' in message_element:
                         recieved_message(message_element)
                     elif 'postback' in message_element:
-                        #started_action(message_element)
                         recieved_postback(message_element)
                     else:
                         print("Unknown event: " + message_element)
@@ -81,10 +75,12 @@ def recieved_postback(postback_data):
 
     if (payload_id == 'CARTA_PASTAS'):
         send_payload_pastas_message(sender_id)
-                        
+    elif (payload_id == 'JUNIN_LOCALES'):
+        send_payload_ljunin_message(sender_id)
+
 def recieved_message(message_data):
     print("Message data: " + str(message_data['message']))
-    
+
     sender_id = message_data['sender']['id']
     recipient_id = message_data['recipient']['id']
     time_message = message_data['timestamp']
@@ -99,10 +95,10 @@ def recieved_message(message_data):
         if (message_value_text == 'demo'):
             send_generic_message(sender_id, message_value_text)
         elif (message_value_text != 'generic'):
-            send_text_message(sender_id, message_value_text)        
+            send_text_message(sender_id, message_value_text)
     elif 'attachments' in message_data['message']:
         message_value_attachments = message_value['attachments']
-        print(message_value_attachments)       
+        print(message_value_attachments)
         send_text_message(sender_id, 'Message with attachment recieved')
 
 def send_generic_message(recipientid, messagetext):
@@ -141,7 +137,46 @@ def send_payload_pastas_message(recipientid):
                     ]
                 }
             }
-        }        
+        }
+    }
+
+    call_send_api(message_answer)
+
+def send_payload_ljunin_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Toto\'s Huancayo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
     }
 
     call_send_api(message_answer)
@@ -199,13 +234,13 @@ def bot_extras():
                             {
                                 'title': 'Pizzas',
                                 'type': 'postback',
-                                'payload': 'CARTA_PIZZAS'                            
+                                'payload': 'CARTA_PIZZAS'
                             },
                             {
                                 'title': 'Parrillas',
                                 'type': 'postback',
-                                'payload': 'CARTA_PARRILLAS'                            
-                            }                       
+                                'payload': 'CARTA_PARRILLAS'
+                            }
                         ]
                     },
                     {
@@ -220,13 +255,13 @@ def bot_extras():
                             {
                                 'title': 'Ayacucho',
                                 'type': 'postback',
-                                'payload': 'AYACUCHO_LOCALES'                            
+                                'payload': 'AYACUCHO_LOCALES'
                             },
                             {
                                 'title': 'Lima',
                                 'type': 'postback',
-                                'payload': 'LIMA_LOCALES'                            
-                            }                       
+                                'payload': 'LIMA_LOCALES'
+                            }
                         ]
                     }
                 ]
