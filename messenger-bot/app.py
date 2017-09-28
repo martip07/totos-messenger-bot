@@ -60,7 +60,7 @@ def started_action(messagedata):
             'id': str(messagedata['sender']['id'])
         },
         'message': {
-            'text': 'Pandi te ama'
+            'text': 'En momento se comunicaran contigo, gracias!'
         }
     }
 
@@ -104,7 +104,7 @@ def send_text_message(recipientid, messagetext):
             'id': recipientid
         },
         'message': {
-            'text': 'Pandi te ama'
+            'text': 'En momento se comunicaran contigo, gracias!'
         }
     }
     print(message_answer)
@@ -132,6 +132,60 @@ def bot_extras():
             {
                 'locale': 'es_ES',
                 'text': 'Hola, {{user_first_name}}. Soy el bot de Toto\'s Pizza, empecemos'
+            }
+        ],
+        'persistent_menu': [
+            {
+                'locale': 'default',
+                'composer_input_disabled': True,
+                'call_to_actions': [
+                    {
+                        'title': 'Carta',
+                        'type': 'nested',
+                        'call_to_actions': [
+                            {
+                                'title': 'Pastas',
+                                'type': 'postback',
+                                'payload': 'CARTA_PASTAS'
+                            },
+                            {
+                                'title': 'Pizzas',
+                                'type': 'postback',
+                                'payload': 'CARTA_PIZZAS'                            
+                            },
+                            {
+                                'title': 'Parrillas',
+                                'type': 'postback',
+                                'payload': 'CARTA_PARRILLAS'                            
+                            }                       
+                        ]
+                    },
+                    {
+                        'title': 'Locales',
+                        'type': 'nested',
+                        'call_to_actions': [
+                            {
+                                'title': 'Junin',
+                                'type': 'postback',
+                                'payload': 'JUNIN_LOCALES'
+                            },
+                            {
+                                'title': 'Ayacucho',
+                                'type': 'postback',
+                                'payload': 'AYACUCHO_LOCALES'                            
+                            },
+                            {
+                                'title': 'Lima',
+                                'type': 'postback',
+                                'payload': 'LIMA_LOCALES'                            
+                            }                       
+                        ]
+                    }
+                ]
+            },
+            {
+                'locale': 'es_ES',
+                'composer_input_disabled': False
             }
         ]
     }
