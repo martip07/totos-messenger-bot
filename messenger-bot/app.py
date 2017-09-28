@@ -46,26 +46,6 @@ def bot_webhook():
                     else:
                         print("Unknown event: " + message_element)
 
-def started_action(messagedata):
-
-    print(str(messagedata['sender']['id']))
-
-    message_answer = {
-        'recipient': {
-            'id': str(messagedata['sender']['id'])
-        },
-        'message': {
-            'text': 'En momento se comunicaran contigo, gracias!'
-        }
-    }
-
-    headers = {'Content-type': 'application/json'}
-    r = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token='+ FB_TOKEN, json=message_answer, headers=headers)
-    print(r.url)
-
-    if r.status_code != requests.codes.ok:
-        print(r.text)
-
 def recieved_postback(postback_data):
     sender_id = postback_data['sender']['id']
     payload_id = postback_data['postback']['payload']
@@ -73,10 +53,23 @@ def recieved_postback(postback_data):
 
     print(payload_id)
 
+    # payload para todo lo que es del grupo Carta
+
     if (payload_id == 'CARTA_PASTAS'):
         send_payload_pastas_message(sender_id)
+    elif (payload_id == 'CARTA_PIZZAS'):
+        send_payload_pizzas_message(sender_id)
+    elif (payload_id == 'CARTA_PARRILLAS'):
+        send_payload_parrillas_message(sender_id)
+
+    # payload para todo lo que es el grupo Locales
+
     elif (payload_id == 'JUNIN_LOCALES'):
         send_payload_ljunin_message(sender_id)
+    elif (payload_id == 'AYACUCHO_LOCALES'):
+        send_payload_layacucho_message(sender_id)
+    elif (payload_id == 'LIMA_LOCALES'):
+        send_payload_layacucho_message(sender_id)
 
 def recieved_message(message_data):
     print("Message data: " + str(message_data['message']))
@@ -89,20 +82,15 @@ def recieved_message(message_data):
     print('Message for user ' + str(sender_id) + ', fb page: ' + str(recipient_id) + ' at ' + str(time_message) + ', the message is: ' + str(message_value))
 
     message_value_id = message_value['mid']
+
     if 'text' in message_data['message']:
         message_value_text = message_value['text']
         print(message_value_text)
-        if (message_value_text == 'demo'):
-            send_generic_message(sender_id, message_value_text)
-        elif (message_value_text != 'generic'):
-            send_text_message(sender_id, message_value_text)
+        send_text_message(sender_id)
     elif 'attachments' in message_data['message']:
         message_value_attachments = message_value['attachments']
         print(message_value_attachments)
-        send_text_message(sender_id, 'Message with attachment recieved')
-
-def send_generic_message(recipientid, messagetext):
-    print('Generic message for ' + str(recipientid))
+        send_text_message(sender_id)
 
 def send_payload_message(recipientid, messagetext):
     message_answer = {
@@ -116,6 +104,60 @@ def send_payload_message(recipientid, messagetext):
     call_send_api(message_answer)
 
 def send_payload_pastas_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Tallarin a Bolognesa',
+                            'image_url': 'https://static.pexels.com/photos/8500/food-dinner-pasta-spaghetti-8500.jpg',
+                        },
+                        {
+                            'title': 'Tallarin a lo Alfredo',
+                            'image_url': 'https://static.pexels.com/photos/46182/pasta-noodles-plate-eat-46182.jpeg',
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    call_send_api(message_answer)
+
+def send_payload_pizzas_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Tallarin a Bolognesa',
+                            'image_url': 'https://static.pexels.com/photos/8500/food-dinner-pasta-spaghetti-8500.jpg',
+                        },
+                        {
+                            'title': 'Tallarin a lo Alfredo',
+                            'image_url': 'https://static.pexels.com/photos/46182/pasta-noodles-plate-eat-46182.jpeg',
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    call_send_api(message_answer)
+
+def send_payload_parrillas_message(self, arg):
     message_answer = {
         'recipient': {
             'id': recipientid
@@ -172,6 +214,66 @@ def send_payload_ljunin_message(recipientid):
                                     'type': 'element_share'
                                 }
                             ]
+                        },
+                        {
+                            'title': 'Toto\'s San Carlos',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s El Tambo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s Tarma',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
                         }
                     ]
                 }
@@ -181,7 +283,205 @@ def send_payload_ljunin_message(recipientid):
 
     call_send_api(message_answer)
 
-def send_text_message(recipientid, messagetext):
+def send_payload_layacucho_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Toto\'s Huancayo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s San Carlos',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s El Tambo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s Tarma',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    call_send_api(message_answer)
+
+def send_payload_llima_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Toto\'s Huancayo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s San Carlos',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s El Tambo',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        },
+                        {
+                            'title': 'Toto\'s Tarma',
+                            'image_url': 'https://maps.googleapis.com/maps/api/staticmap?center=Toto%27s+Pizza+Huancayo&zoom=17&size=640x400&markers=red:blue|Toto%27s+Pizza+Huancayo&key',
+                            'subtitle': 'Av. Leandra Torres N°112, San Carlos - Huancayo',
+                            'buttons': [
+                                {
+                                    'type': 'web_url',
+                                    'url': 'https://www.facebook.com/totospizza.pe/',
+                                    'title': 'Fanpage'
+                                },
+                                {
+                                    'type': 'phone_number',
+                                    'title': 'Llamar',
+                                    'payload': '(064) 235496'
+                                },
+                                {
+                                    'type': 'element_share'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    call_send_api(message_answer)
+
+def send_text_message(recipientid):
     message_answer = {
         'recipient': {
             'id': recipientid
