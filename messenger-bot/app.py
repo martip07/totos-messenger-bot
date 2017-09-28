@@ -47,7 +47,8 @@ def bot_webhook():
                     if 'message' in message_element:
                         recieved_message(message_element)
                     elif 'postback' in message_element:
-                        started_action(message_element)
+                        #started_action(message_element)
+                        recieved_postback(message_element)
                     else:
                         print("Unknown event: " + message_element)
 
@@ -71,6 +72,15 @@ def started_action(messagedata):
     if r.status_code != requests.codes.ok:
         print(r.text)
 
+def recieved_postback(postback_data):
+    sender_id = postback_data['sender']['id']
+    payload_id = postback_data['postback']['payload']
+    payload_title = postback_data['postback']['title']
+
+    print(payload_id)
+
+    if (payload_id == 'CARTA_PASTAS'):
+        send_payload_pastas_message(sender_id)
                         
 def recieved_message(message_data):
     print("Message data: " + str(message_data['message']))
@@ -97,6 +107,44 @@ def recieved_message(message_data):
 
 def send_generic_message(recipientid, messagetext):
     print('Generic message for ' + str(recipientid))
+
+def send_payload_message(recipientid, messagetext):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'text': messagetext
+        }
+    }
+    call_send_api(message_answer)
+
+def send_payload_pastas_message(recipientid):
+    message_answer = {
+        'recipient': {
+            'id': recipientid
+        },
+        'message': {
+            'attachment': {
+                'type': 'template',
+                'payload': {
+                    'template_type': 'generic',
+                    'elements': [
+                        {
+                            'title': 'Tallarin a Bolognesa',
+                            'image_url': 'https://static.pexels.com/photos/8500/food-dinner-pasta-spaghetti-8500.jpg',
+                        },
+                        {
+                            'title': 'Tallarin a lo Alfredo',
+                            'image_url': 'https://static.pexels.com/photos/46182/pasta-noodles-plate-eat-46182.jpeg',
+                        }
+                    ]
+                }
+            }
+        }        
+    }
+
+    call_send_api(message_answer)
 
 def send_text_message(recipientid, messagetext):
     message_answer = {
@@ -137,7 +185,7 @@ def bot_extras():
         'persistent_menu': [
             {
                 'locale': 'default',
-                'composer_input_disabled': True,
+                'composer_input_disabled': False,
                 'call_to_actions': [
                     {
                         'title': 'Carta',
